@@ -3,7 +3,7 @@ import os
 
 def main():
 
-    openai.api_key = "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"
+    openai.api_key = "YOUR_KEY_HERE"
     model_engine = "text-davinci-002" 
 
     prompt = ""
