@@ -3,31 +3,20 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 import openai
 from tkinter import *
 from PIL import Image, ImageTk
-import webbrowser
 import requests
 import os
 import shutil 
-import time
 
-"""
+API_KEY = "YOUR_KEY_HERE"
 
-python3 -m PyInstaller --onefile -w guiChat.py
-
-IDEAS:
-
-- Prompt maker 
-- Regenerate reply
-- make it pretty
-- voice
-
-"""
-
+# Class containing information about current conversation
 class Form:
 
     questions = []
     answers = []
     template = ""
 
+# Opens downloaded image in screen's canvas
 def open_image(path):
 
     img = Image.open(path)
@@ -37,6 +26,7 @@ def open_image(path):
     images_tk_list.append(temp)
     canvas.create_image((0, 0), anchor="nw", image=temp)
 
+# Writes current convo to the text widget
 def write_convo():
 
     global convo
@@ -53,9 +43,10 @@ def write_convo():
 
     txt_edit.insert(tk.END, text)
 
+# Prompts openai for an image, and saves the image file
 def save_image():
     
-    openai.api_key = "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"
+    openai.api_key = API_KEY
     prompt=tk.simpledialog.askstring("Prompt for Image Generator", "What would you like to make an image of?").lower()
 
     response = openai.Image.create(
@@ -116,13 +107,14 @@ def keyPressed(event):
 
     return
 
+# Asks openai for a completion for the current conversation, plus new user input
 def submit_prompt(template = False, moodsetup=False):
 
     global convo
     prompt = ""
     text = ""
 
-    openai.api_key = "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"
+    openai.api_key = API_KEY
     model_engine = "text-davinci-002"
 
     temperature = 1
@@ -157,6 +149,7 @@ def submit_prompt(template = False, moodsetup=False):
     else:
         convo += response + "\n\nPrompt: "
 
+# Opens file into text edit widget
 def open_file():
     global convo
     convo = ""
@@ -171,6 +164,7 @@ def open_file():
         convo += input_file.read()
     write_convo()
 
+# Saves current conversation into text file
 def save_file():
     """Save the current file as a new file."""
     filepath = asksaveasfilename(
@@ -183,6 +177,7 @@ def save_file():
         text = txt_edit.get("1.0", tk.END)
         output_file.write(text)
     
+# Starts convo with a prompt which sets mood for the rest of the conversation
 def set_mood():
 
     global convo
@@ -279,6 +274,7 @@ def returnPressed(event):
     submit_prompt()
     write_convo()
 
+# Return pressed in the second text edit widget, which is for submitting info to the templates
 def returnPressed2():
 
     global global_form
